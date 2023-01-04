@@ -38,6 +38,29 @@ function createImage(url, description) {
   return el;
 }
 
-function createSampleCard(){
-    return createCardElement('Carregando...', '...')
+function createSampleCard() {
+  return createCardElement("Carregando...", "...");
 }
+
+const API_URL = "https://api.nasa.gov/planetary/apod";
+
+const API_KEY = "DEMO_KEY"; 
+
+const request_url = `${API_URL}?api_key=${API_KEY}&count=10`;
+
+async function requestRandomImages(count) {
+  try {
+    const resp = await fetch(request_url);
+    if (!resp.ok) {
+      throw new Error("Ocorreu um erro na requisição");
+    }
+    const data = await resp.json();
+    console.log(data);
+    return data;
+
+  } catch (erro) {
+    console.error(erro);
+  }
+}
+
+requestRandomImages(15)

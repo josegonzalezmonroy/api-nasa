@@ -42,25 +42,38 @@ function createSampleCard() {
   return createCardElement("Carregando...", "...");
 }
 
-const API_URL = "https://api.nasa.gov/planetary/apod";
+class ApiConnection {
+  
+  get API_URL(){
+    return "https://api.nasa.gov/planetary/apod"
+  }
 
-const API_KEY = "DEMO_KEY"; 
+  get API_KEY(){
+    return "DEMO_KEY"
+  }
+  async getRandomImages(count) {
+    const request_url = `${this.API_URL}?api_key=${this.API_KEY}&count=${count}`;
 
-const request_url = `${API_URL}?api_key=${API_KEY}&count=10`;
-
-async function requestRandomImages(count) {
-  try {
     const resp = await fetch(request_url);
-    if (!resp.ok) {
-      throw new Error("Ocorreu um erro na requisição");
+    if (resp.ok) {
+      return await resp.json();
     }
-    const data = await resp.json();
-    console.log(data);
-    return data;
+    throw new Error(`Error fetching API, status: ${resp.status}`);
+  }
+  async getImagesForDateRange(start_date, end_date) {
+    let request_url = `${this.API_URL}?api_key=${this.API_KEY}`;
+    if (end_date) {
+      request_url += `&start_date=${start_date}&end_date=${end_date}`;
+    } else {
+      request_url += `&start_date=${start_date}`;
+    }
 
-  } catch (erro) {
-    console.error(erro);
+    const resp = await fetch(request_url);
+    if (resp.ok) {
+      return await resp.json();
+    }
+    throw new Error(`Error fetching API, status: ${resp.status}`);
   }
 }
 
-requestRandomImages(15)
+let api = new ApiConnection();
